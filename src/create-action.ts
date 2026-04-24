@@ -32,7 +32,8 @@ export function createAction<
 ): <
   TPayload extends TCreatorPayload = TCreatorPayload,
   TMeta extends TCreatorMeta = TCreatorMeta
->() => (...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>;
+>() => ((...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>) &
+  ActionCreatorTypeMetadata<TType, ActionBuilder<TType, TPayload, TMeta>>;
 
 /**
  * @description create an action-creator
@@ -50,7 +51,11 @@ export function createAction<
   | (<
       TPayload extends TCreatorPayload = TCreatorPayload,
       TMeta extends TCreatorMeta = TCreatorMeta
-    >() => (...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>)
+    >() => ((...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>) &
+      ActionCreatorTypeMetadata<
+        TType,
+        ActionBuilder<TType, TPayload, TMeta>
+      >)
   | (<TPayload = undefined, TMeta = undefined>() => ActionCreatorBuilder<
       TType,
       TPayload,
@@ -78,6 +83,11 @@ export function createAction<
         ...(payload !== undefined && { payload }),
         ...(meta !== undefined && { meta }),
       };
-    }) as ActionCreatorBuilder<TType, TPayload, TMeta>;
+    }) as ((...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>) &
+      ActionCreatorBuilder<TType, TPayload, TMeta> &
+      ActionCreatorTypeMetadata<
+        TType,
+        ActionBuilder<TType, TPayload, TMeta>
+      >;
   };
 }
