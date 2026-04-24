@@ -190,6 +190,13 @@ export type ActionCreatorBuilder<
 > = ActionCreatorBuilderType<TType, TPayload, TMeta> &
   ActionCreatorTypeMetadata<TType, ActionBuilder<TType, TPayload, TMeta>>;
 
+type ActionCreatorWithArgs<
+  TType extends TypeConstant,
+  TArgs extends any[],
+  TPayload extends any = undefined,
+  TMeta extends any = undefined
+> = (...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>;
+
 type ActionCreatorBuilderWithArgs<
   TType extends TypeConstant,
   TArgs extends any[],
@@ -197,7 +204,7 @@ type ActionCreatorBuilderWithArgs<
   TMeta extends any = undefined
 > = [TArgs] extends [never]
   ? ActionCreatorBuilder<TType, TPayload, TMeta>
-  : ((...args: TArgs) => ActionBuilder<TType, TPayload, TMeta>) &
+  : ActionCreatorWithArgs<TType, TArgs, TPayload, TMeta> &
       ActionCreatorTypeMetadata<TType, ActionBuilder<TType, TPayload, TMeta>>;
 
 /**
